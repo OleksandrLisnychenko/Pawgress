@@ -4,7 +4,7 @@ mode: greenfield-bootstrap
 updated_at: "2026-09-05"
 reflects_commit: "83f6d44"
 language: "python 3.12 (fastapi) + typescript (angular)"
-build_cmd: "cd backend && pip install -e .[dev] && cd ../frontend && npm ci && ng build"
+build_cmd: "cd backend && pip install -e \".[dev]\" && cd ../frontend && npm ci && ng build"
 test_cmd: "cd backend && pytest"
 lint_cmd: ""
 migration_tool: "alembic"
@@ -91,6 +91,7 @@ future feature must follow — not yet backed by real file citations until scaff
 - **No test-suite convention beyond the skeleton smoke test.** The owner chose to defer unit/integration test strategy and CI to move fast on the MVP — `implement` should not assume a test harness exists beyond `backend/tests/test_smoke.py`; `plan-tests` will need to fix a real convention before feature-level TDD can run meaningfully.
 - **No CI workflow.** Builds/tests/lint run locally only until the owner decides to add one — no automated gate on pushes yet.
 - **No UI design system.** Every screen is built ad hoc in plain Angular until `/sdd:design-system` is run — expect visual inconsistency across early features until then.
+- **Frontend build/boot unverified.** The `frontend/` skeleton (angular.json, tsconfig, standalone app shell) was materialized by `/sdd:scaffold`, but this development machine has no Node.js/npm/Angular CLI installed, so `npm ci` and `ng build`/`ng serve` have never actually been run against it. Verify `npm ci && ng serve` boots cleanly once Node is available, before building the first UI feature into it.
 
 ## Reconciliation with the authored architecture doc
 

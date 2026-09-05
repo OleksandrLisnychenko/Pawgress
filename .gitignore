@@ -1,2 +1,15 @@
 .claude/*.local.md
 .worktrees/
+
+# backend
+backend/.venv/
+backend/*.egg-info/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.db
+backend/.pytest_cache/
+
+# frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
