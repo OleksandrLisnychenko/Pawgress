@@ -1,0 +1,54 @@
+{
+  "slug": "_scaffold",
+  "tasks": [
+    {
+      "id": "S1",
+      "title": "Create the backend + frontend module/folder structure and entry points",
+      "layer": "scaffold",
+      "deps": [],
+      "acs": [],
+      "dod": "backend/ (FastAPI app skeleton with api/services/repositories/models/schemas/core) and frontend/ (Angular workspace with core/shared/features) exist; `uvicorn app.main:app` boots an empty FastAPI app; `ng serve` boots an empty Angular shell",
+      "files_hint": [
+        "backend/app/main.py",
+        "backend/app/api/",
+        "backend/app/services/",
+        "backend/app/repositories/",
+        "backend/app/models/",
+        "backend/app/schemas/",
+        "backend/app/core/",
+        "backend/pyproject.toml",
+        "frontend/src/app/core/",
+        "frontend/src/app/shared/",
+        "frontend/src/app/features/",
+        "frontend/angular.json"
+      ]
+    },
+    {
+      "id": "S2",
+      "title": "Wire a minimal backend smoke test",
+      "layer": "scaffold",
+      "deps": ["S1"],
+      "acs": [],
+      "dod": "`pytest` runs one smoke test that boots the FastAPI app (via TestClient) and confirms it responds; no broader unit/integration test harness is set up yet (deliberately deferred per docs/architecture-map.md Constraints)",
+      "files_hint": ["backend/tests/test_smoke.py"]
+    },
+    {
+      "id": "S3",
+      "title": "Set up Alembic with an initial empty migration",
+      "layer": "scaffold",
+      "deps": ["S1"],
+      "acs": [],
+      "dod": "`alembic upgrade head` applies cleanly against a fresh SQLite file and `alembic downgrade base` reverts cleanly",
+      "files_hint": ["backend/migrations/", "backend/alembic.ini"]
+    },
+    {
+      "id": "S4",
+      "title": "Write CLAUDE.md from the chosen foundation conventions",
+      "layer": "scaffold",
+      "deps": ["S1"],
+      "acs": [],
+      "dod": "CLAUDE.md documents the layered backend convention, ULID IDs, unified error envelope, SQLite/Alembic persistence, Angular standalone-component structure, and the explicit note that CI + a full test-suite convention are deferred (matches docs/architecture-map.md)",
+      "files_hint": ["CLAUDE.md"]
+    }
+  ]
+}
