@@ -20,7 +20,7 @@ A single owner can list every command/skill they want their puppy to learn acros
 | # | Step | Source | Size | Status |
 |---|---|---|:---:|---|
 | 1 | Scaffold the project skeleton (backend + frontend build/boot) | `architecture-map.md` (mode: greenfield-bootstrap) | S | idea |
-| 2 | Skill/command catalog — add and list commands/skills under the three fixed categories | `idea-brief.md §1 Raw idea`, `§7 Recommendation` | S | idea |
+| 2 | Skill/command catalog — add and list commands/skills under the three fixed categories | `idea-brief.md §1 Raw idea`, `§7 Recommendation` | S | [spec'd](features/skill-catalog/spec.md) |
 | 3 | Skill status tracking — move a skill's status forward or backward through the four-stage funnel | `idea-brief.md §6 Risks` | XS | idea |
 | 4 | Training journal — log a training session (date, successful/total attempts, comment) per skill | `idea-brief.md §1 Raw idea`, `§7 Recommendation` | S | idea |
 | 5 | Success-rate trend — auto-computed per-skill percentage derived from the training journal | `idea-brief.md §7 Recommendation`, `§8 Open questions` | XS | idea |
