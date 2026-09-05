@@ -17,11 +17,13 @@ Right now the puppy owner keeps no record at all of what commands or skills they
 
 This is the anchor step of the MVP roadmap (`docs/roadmap.md` step 2 "Skill/command catalog"): the status-tracking and training-journal features that come next both attach to skills that must already exist in this catalog, so nothing else in the roadmap can be built before this slice.
 
-The committed approach: the Owner manually adds a skill by giving it a name and one of the three fixed categories (Basic, Household, Socialization); the category is fixed at creation and never changes. The skill's name must be unique within its own category (exact match) — a duplicate is rejected rather than silently created. Every new skill starts at the initial status "Planned." The catalog view groups skills under their category in the order they were added. Editing and deleting a skill are explicitly out of this slice.
+The committed approach: the Owner manually adds a skill by giving it a name and one of the three fixed categories (Basic, Household, Socialization); the category is fixed at creation and never changes. The skill's name must be unique within its own category (exact match, after trimming leading/trailing whitespace) — a duplicate is rejected rather than silently created. Every new skill is stored with an explicit status attribute drawn from the four-stage training funnel — Planned, In Progress, Consolidating, Mastered — and starts at the initial value Planned; moving it through the other three values belongs to the separate status-tracking feature (roadmap step 3), not this slice. The catalog view groups skills under their category in the order they were added. Editing and deleting a skill are explicitly out of this slice.
 
 **Decision override:** a failure-mode analysis during ideation found that allowing duplicate names with no way to delete them would make identical entries permanently indistinguishable once the status-tracking and training-journal features start attaching data to them (an accidental double-tap or typo becomes unremovable garbage forever). Rather than adding delete/edit to this slice to compensate, per-category name uniqueness at creation is enforced instead — see AC-03.
 
 **Decision override:** the critic flagged that this uniqueness guard (AC-03) does not itself guarantee atomicity against two near-simultaneous identical submissions (e.g. a double-tap) both passing the check before either is recorded. Given this is a single local Owner with no concurrent multi-client access in this slice, that race is accepted as a known, low-probability risk rather than specified against — revisit if the app ever gains concurrent access.
+
+**Decision override (clarify, 2026-09-05):** AC-04 reads as if it guards against more than one Owner/catalog, which would contradict §3's exclusion of multi-owner scoping. Resolved as a no-op for this slice: this MVP has exactly one dog, one Owner, and no authentication, so exactly one catalog exists and can ever exist — no other catalog is addressable, so no access-control mechanism is required to satisfy US-05. Revisit if the app ever gains multiple owners or dogs.
 
 ## 2. Goals
 
@@ -34,6 +36,7 @@ The committed approach: the Owner manually adds a skill by giving it a name and 
 - Custom/user-defined categories — the three categories are fixed (`docs/idea-brief.md` §5 Out of scope).
 - Command/skill ordering or prerequisites (a training-plan sequence) — `docs/idea-brief.md` §5 Out of scope; every catalog item is independent.
 - Multi-pet or multi-owner scoping — `docs/idea-brief.md` §5 Out of scope; the catalog belongs to exactly one implicit Owner.
+- Moving a skill's status after creation — deferred to the status-tracking feature (roadmap step 3); this slice only ever sets a new skill's status to its initial value, Planned.
 
 ## 4. User stories
 
@@ -79,37 +82,43 @@ The committed approach: the Owner manually adds a skill by giving it a name and 
 
 **Given** the Owner is adding a skill
 **When** the Owner submits a non-empty name and one of the three fixed categories
-**Then** the system records the skill in the catalog with initial status Planned and confirms it to the Owner
+**Then** the system records the skill in the catalog with initial status Planned, confirms it to the Owner, and the skill appears under its category heading in the catalog view
 
 ### AC-02 (US-04) — error
 
 **Given** the Owner is adding a skill
-**When** the Owner submits a name that is empty or contains only whitespace
+**When** the Owner submits a name that, after trimming leading and trailing whitespace, is empty
 **Then** the system blocks the creation and tells the Owner the name cannot be empty
 
 ### AC-03 (US-03) — domain invariant
 
-**Given** the catalog already contains a skill with a given name (exact match) in a given category
+**Given** the catalog already contains a skill with a given name (exact match after trimming leading/trailing whitespace — internal spacing and letter case are not normalized) in a given category
 **When** the Owner attempts to add another skill with that same name in that same category
 **Then** the system blocks the creation and tells the Owner that name already exists in that category
 
 ### AC-04 (US-05) — authorization
 
-**Given** the catalog belongs to exactly one Owner
-**When** any action views or adds to the catalog
-**Then** the system never exposes or accepts a change to a catalog other than that Owner's own
+**Given** this slice supports exactly one Owner and exactly one catalog, with no way to create or address another
+**When** the Owner views or adds to the catalog
+**Then** there is no other catalog for the system to expose or accept changes to — cross-owner exposure cannot occur in this slice, and no additional access-control step is required
 
 ### AC-05 (US-06) — cross-context
 
-**Given** the (separate) status-tracking feature defines "Planned" as the valid starting state of its status funnel
+**Given** every skill's status is drawn from the four-stage training funnel (Planned, In Progress, Consolidating, Mastered) that the separate status-tracking feature will let the Owner move it through
 **When** the Owner adds a new skill
-**Then** the system assigns that skill the Planned state, so it is immediately valid input for the status-tracking feature once it exists
+**Then** the system assigns that skill the status Planned — the funnel's fixed starting value — so it is immediately valid input for the status-tracking feature once it exists
 
 ### AC-06 (US-02) — happy path
 
-**Given** the catalog contains skills in more than one category
+**Given** the catalog contains skills in zero or more of the three fixed categories
 **When** the Owner opens the catalog view
-**Then** the system displays the skills grouped under their fixed category headings, each skill under exactly one category, in the order they were added
+**Then** the system displays all three category headings, always, each populated with its skills in the order they were added (or empty if it has none), and returns every skill in the catalog with no paging
+
+### AC-07 (US-04) — error
+
+**Given** the Owner is adding a skill
+**When** the Owner submits a category that is missing or is not one of the three fixed categories
+**Then** the system blocks the creation and tells the Owner the category must be one of the three fixed categories
 
 ## 6. Non-functional requirements
 
@@ -125,4 +134,4 @@ The committed approach: the Owner manually adds a skill by giving it a name and 
 
 ## 8. Open questions
 
-<!-- none — the two candidate open questions from drafting (name-normalization for the uniqueness check; a catalog-size warning threshold) were resolved by taking the stated defaults directly into scope rather than deferring: AC-03 uses exact-match comparison (no case/whitespace normalization), and no size limit or warning is imposed on the catalog in this slice. -->
+<!-- none — the two candidate open questions from drafting (name-normalization for the uniqueness check; a catalog-size warning threshold) were resolved by taking the stated defaults directly into scope rather than deferring: no size limit or warning is imposed on the catalog in this slice, and no maximum length is imposed on a skill name beyond the non-empty check (AC-02). AC-03's comparison was refined during /sdd:clarify on 2026-09-05: exact match after trimming leading/trailing whitespace (still no case or internal-whitespace normalization) — see AC-02/AC-03. -->
