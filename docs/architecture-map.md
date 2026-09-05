@@ -2,12 +2,12 @@
 status: current
 mode: greenfield-bootstrap
 updated_at: "2026-09-05"
-reflects_commit: "83f6d44"
+reflects_commit: "724cfcd"
 language: "python 3.12 (fastapi) + typescript (angular)"
-build_cmd: "cd backend && pip install -e \".[dev]\" && cd ../frontend && npm ci && ng build"
-test_cmd: "cd backend && pytest"
+build_cmd: "cd backend && python -m venv app/.venv && app/.venv/Scripts/pip install -r app/requirements.txt && python -m venv migrations/.venv && migrations/.venv/Scripts/pip install -r migrations/requirements.txt && cd ../frontend && npm ci && ng build"
+test_cmd: "cd backend && app/.venv/Scripts/python -m pytest"
 lint_cmd: ""
-migration_tool: "alembic"
+migration_tool: "alembic (separate venv: backend/migrations/.venv, run as `migrations/.venv/Scripts/python -m alembic <cmd>` from backend/)"
 frontend: "angular (standalone components)"
 ---
 
@@ -61,7 +61,10 @@ future feature must follow — not yet backed by real file citations until scaff
 - **Error handling:** unified JSON error envelope `{"error": {"code", "message", "details"}}`, raised via FastAPI exception handlers in `backend/app/core/errors.py`
 - **IDs:** app-generated ULID strings as primary keys, generated in `backend/app/core/ids.py` before insert — never DB auto-increment
 - **Persistence / DB access:** repositories wrap SQLAlchemy sessions; services never import SQLAlchemy directly; SQLite as dumb storage (no triggers/stored logic)
-- **Migrations:** Alembic, versioned scripts under `backend/migrations/versions/`
+- **Migrations:** Alembic, versioned scripts under `backend/migrations/versions/`. Runs in its
+  own venv (`backend/migrations/.venv`, deps in `backend/migrations/requirements.txt`) separate
+  from the API runtime venv (`backend/app/.venv`, deps in `backend/app/requirements.txt`) — `env.py`
+  only imports `app.core.db` / `app.models`, so migration tooling never needs FastAPI/Pydantic.
 - **Tests:** MVP deliberately ships with only a structural smoke test (`backend/tests/test_smoke.py` — app boots + migrations apply/revert); a real unit/integration test convention is an open decision, not yet fixed (see Constraints)
 - **Inter-module communication:** direct in-process function calls — single backend service, no messaging/events at this stage
 - **UI / styling:** Angular standalone components, component-scoped SCSS, no third-party UI kit for MVP — run `/sdd:design-system` later if a shared component library becomes worth formalizing

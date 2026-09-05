@@ -2,8 +2,8 @@
 .worktrees/
 
 # backend
-backend/.venv/
-backend/*.egg-info/
+backend/app/.venv/
+backend/migrations/.venv/
 backend/__pycache__/
 backend/**/__pycache__/
 backend/*.db
