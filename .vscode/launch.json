@@ -1,0 +1,42 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Frontend (Angular)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}/frontend",
+      "preLaunchTask": "Run Frontend (external terminal)"
+    },
+    {
+      "name": "Launch Backend (FastAPI, external)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:8000/health",
+      "webRoot": "${workspaceFolder}/backend",
+      "preLaunchTask": "Run FastAPI (external terminal)"
+    },
+    {
+      "name": "Debug FastAPI (backend)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "cwd": "${workspaceFolder}/backend",
+      "python": "${workspaceFolder}/backend/app/.venv/Scripts/python.exe",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Run FastAPI (external terminal)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["app.main:app", "--reload", "--port", "8000"],
+      "cwd": "${workspaceFolder}/backend",
+      "python": "${workspaceFolder}/backend/app/.venv/Scripts/python.exe",
+      "console": "externalTerminal"
+    }
+  ],
+  "compounds": []
+}

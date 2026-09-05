@@ -16,7 +16,7 @@
             "index": "src/index.html",
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+            "assets": ["src/assets"],
             "styles": ["src/styles.scss"],
             "scripts": []
           },
@@ -41,5 +41,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
