@@ -74,8 +74,7 @@ migrations/.venv/Scripts/python -m alembic upgrade head
 app/.venv/Scripts/python -m uvicorn app.main:app --reload
 ```
 
-Frontend (structure only — **not yet verified**; this machine has no Node.js/npm/Angular CLI
-installed, so `npm ci` / `ng serve` have not been run against this skeleton):
+Frontend (verified working — `npm run build` boots the empty Angular shell cleanly):
 
 ```
 cd frontend
